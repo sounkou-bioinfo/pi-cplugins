@@ -1,0 +1,7 @@
+.build/
+.deps/
+.pi/
+.quarto/
+build/
+node_modules/
+*.tgz

@@ -1,0 +1,69 @@
+{
+  "name": "pi-cplugins",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Sounkou Mahamane Toure",
+  "license": "GPL-2.0-or-later",
+  "type": "module",
+  "description": "TinyCC-backed C plugins and generated Pi bindings",
+  "keywords": [
+    "pi-package",
+    "tinycc",
+    "c",
+    "plugins"
+  ],
+  "scripts": {
+    "install": "npm run build:native",
+    "build:tinycc": "./scripts/build-tinycc.sh",
+    "build:native": "npm run build:tinycc && node-gyp rebuild",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "build": "npm run build:native && npm run build:ts",
+    "prepare": "npm run build:ts",
+    "prepack": "npm run build:ts",
+    "typecheck": "tsc",
+    "demo": "node --import tsx scripts/render-demo.ts",
+    "demo:check": "node --import tsx scripts/render-demo.ts --check",
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:package": "node test/package-smoke.mjs",
+    "check": "npm run build && npm run typecheck && npm run demo:check && npm test && npm run test:package"
+  },
+  "dependencies": {
+    "@types/node": "^24.3.0",
+    "node-api-headers": "^1.9.0",
+    "tree-sitter-c": "^0.24.1",
+    "typescript": "^5.9.2",
+    "web-tree-sitter": "^0.25.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "node-gyp": "^11.4.2",
+    "tsx": "^4.20.5",
+    "typebox": "*"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./cc": {
+      "types": "./dist/src/cc.d.ts",
+      "default": "./dist/src/cc.js"
+    },
+    "./ffi": {
+      "types": "./dist/src/ffi.d.ts",
+      "default": "./dist/src/ffi.js"
+    }
+  },
+  "pi": {
+    "extensions": [
+      "./extension/index.ts"
+    ]
+  }
+}

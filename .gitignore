@@ -1,0 +1,8 @@
+.build/
+.deps/
+.pi/
+.quarto/
+build/
+dist/
+node_modules/
+npm-debug.log*

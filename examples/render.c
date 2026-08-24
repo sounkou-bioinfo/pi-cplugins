@@ -1,0 +1,50 @@
+#include <stdint.h>
+#include <stdio.h>
+
+static char rendered_svg[8192];
+
+int32_t render_width(void) {
+  return 960;
+}
+
+int32_t render_height(void) {
+  return 420;
+}
+
+const char* render_card(int32_t accent) {
+  if (accent < 40) accent = 40;
+  if (accent > 235) accent = 235;
+  const int32_t dark = accent / 3;
+  const int32_t light = 255 - accent / 4;
+
+  const int written = snprintf(
+      rendered_svg, sizeof(rendered_svg),
+      "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"420\" viewBox=\"0 0 960 420\">"
+      "<defs><linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">"
+      "<stop stop-color=\"rgb(%d,%d,80)\"/><stop offset=\"1\" stop-color=\"rgb(18,24,%d)\"/>"
+      "</linearGradient><filter id=\"shadow\"><feDropShadow dx=\"0\" dy=\"8\" stdDeviation=\"10\" flood-opacity=\".28\"/></filter></defs>"
+      "<rect width=\"960\" height=\"420\" rx=\"28\" fill=\"url(#bg)\"/>"
+      "<text x=\"52\" y=\"72\" fill=\"white\" font-family=\"system-ui,sans-serif\" font-size=\"34\" font-weight=\"700\">Pi C plugins, actually running</text>"
+      "<text x=\"52\" y=\"108\" fill=\"#dbeafe\" font-family=\"ui-monospace,monospace\" font-size=\"16\">ordinary C → generated ABI → in-memory TinyCC → Pi tool result</text>"
+      "<g filter=\"url(#shadow)\" font-family=\"system-ui,sans-serif\" text-anchor=\"middle\">"
+      "<rect x=\"52\" y=\"158\" width=\"220\" height=\"122\" rx=\"18\" fill=\"#f8fafc\"/>"
+      "<text x=\"162\" y=\"211\" fill=\"#0f172a\" font-size=\"22\" font-weight=\"700\">Tree-sitter C</text>"
+      "<text x=\"162\" y=\"244\" fill=\"#475569\" font-size=\"15\">discovers render_card</text>"
+      "<rect x=\"370\" y=\"158\" width=\"220\" height=\"122\" rx=\"18\" fill=\"#f8fafc\"/>"
+      "<text x=\"480\" y=\"211\" fill=\"#0f172a\" font-size=\"22\" font-weight=\"700\">TinyCC</text>"
+      "<text x=\"480\" y=\"244\" fill=\"#475569\" font-size=\"15\">compiles + relocates</text>"
+      "<rect x=\"688\" y=\"158\" width=\"220\" height=\"122\" rx=\"18\" fill=\"#f8fafc\"/>"
+      "<text x=\"798\" y=\"211\" fill=\"#0f172a\" font-size=\"22\" font-weight=\"700\">Pi c_call</text>"
+      "<text x=\"798\" y=\"244\" fill=\"#475569\" font-size=\"15\">returns this SVG</text></g>"
+      "<g stroke=\"#bfdbfe\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\">"
+      "<path d=\"M286 219h65\"/><path d=\"m340 208 11 11-11 11\"/>"
+      "<path d=\"M604 219h65\"/><path d=\"m658 208 11 11-11 11\"/></g>"
+      "<rect x=\"52\" y=\"326\" width=\"856\" height=\"48\" rx=\"12\" fill=\"rgba(15,23,42,.62)\"/>"
+      "<circle cx=\"78\" cy=\"350\" r=\"7\" fill=\"rgb(%d,%d,%d)\"/>"
+      "<text x=\"98\" y=\"356\" fill=\"#e2e8f0\" font-family=\"ui-monospace,monospace\" font-size=\"15\">rendered by examples/render.c through pi_plugin_init</text>"
+      "</svg>",
+      accent, light, accent, light, accent, dark);
+
+  if (written < 0 || (size_t)written >= sizeof(rendered_svg)) return "";
+  return rendered_svg;
+}
